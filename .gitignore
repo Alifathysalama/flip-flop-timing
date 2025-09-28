@@ -1,0 +1,4 @@
+*.AppImage
+*~
+.ipynb_checkpoints
+/notebooks/*.pickle

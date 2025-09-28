@@ -1,0 +1,22 @@
+.lib cornerMOSlv.lib mos_tt
+.include ../magic/fdc_dense.spice
+
+.param vdd=1.2
+Vdd VDD GND vdd
+Vss VSS GND 0
+.param rise_time=25p
+.param clock_period=1n
+Vresetn R GND PULSE(1.2 0 0p 0p rise_time {1.5 * clock_period} 0)
+Vdata D GND PULSE(0 vdd {0.5 * clock_period} rise_time rise_time {2 * clock_period} {4 * clock_period})
+Vclk C GND PULSE(0 vdd 0p rise_time rise_time {0.5 * clock_period} clock_period)
+.param temp=27
+
+.tran 1p 8ns
+
+.control
+run
+wrdata /tmp/spice-out.txt C R D nand0 nand1 nand2 nand3 Q nand5
+quit
+.endc
+
+.end

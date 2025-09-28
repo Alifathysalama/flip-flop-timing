@@ -1,0 +1,34 @@
+* SPICE3 file created from fdc_dense.ext - technology: ihp-sg13g2
+
+X0 VDD D nand3 VDD sg13_lv_pmos ad=57f pd=0.68u as=57f ps=0.68u w=0.3u l=0.13u
+X1 nand5 Q VDD VDD sg13_lv_pmos ad=0.102p pd=1.28u as=57f ps=0.68u w=0.3u l=0.13u
+X2 nand1 nand0 a_88_n122# VSS sg13_lv_nmos ad=0.102p pd=1.28u as=57f ps=0.68u w=0.3u l=0.13u
+X3 a_1958_n122# nand5 Q VSS sg13_lv_nmos ad=27f pd=0.48u as=0.102p ps=1.28u w=0.3u l=0.13u
+X4 VDD R nand1 VDD sg13_lv_pmos ad=57f pd=0.68u as=57f ps=0.68u w=0.3u l=0.13u
+X5 nand0 nand1 VDD VDD sg13_lv_pmos ad=57f pd=0.68u as=0.102p ps=1.28u w=0.3u l=0.13u
+X6 VDD C nand2 VDD sg13_lv_pmos ad=57f pd=0.68u as=57f ps=0.68u w=0.3u l=0.13u
+X7 nand2 nand1 a_1256_n122# VSS sg13_lv_nmos ad=0.102p pd=1.28u as=42f ps=0.58u w=0.3u l=0.13u
+X8 nand1 C VDD VDD sg13_lv_pmos ad=57f pd=0.68u as=0.102p ps=1.28u w=0.3u l=0.13u
+X9 a_26_n122# C VSS VSS sg13_lv_nmos ad=27f pd=0.48u as=0.102p ps=1.28u w=0.3u l=0.13u
+X10 a_1174_n122# nand3 VSS VSS sg13_lv_nmos ad=42f pd=0.58u as=0.102p ps=1.28u w=0.3u l=0.13u
+X11 a_766_n122# R VSS VSS sg13_lv_nmos ad=40.5f pd=0.57u as=0.102p ps=1.28u w=0.3u l=0.13u
+X12 a_1256_n122# C a_1174_n122# VSS sg13_lv_nmos ad=42f pd=0.58u as=42f ps=0.58u w=0.3u l=0.13u
+X13 nand5 Q a_1628_n122# VSS sg13_lv_nmos ad=0.102p pd=1.28u as=40.5f ps=0.57u w=0.3u l=0.13u
+X14 VDD nand3 nand0 VDD sg13_lv_pmos ad=0.1185p pd=1.09u as=57f ps=0.68u w=0.3u l=0.13u
+X15 nand3 R VDD VDD sg13_lv_pmos ad=57f pd=0.68u as=0.1185p ps=1.09u w=0.3u l=0.13u
+X16 VDD R nand5 VDD sg13_lv_pmos ad=57f pd=0.68u as=57f ps=0.68u w=0.3u l=0.13u
+X17 nand2 nand3 VDD VDD sg13_lv_pmos ad=57f pd=0.68u as=0.102p ps=1.28u w=0.3u l=0.13u
+X18 nand3 nand2 a_846_n122# VSS sg13_lv_nmos ad=0.102p pd=1.28u as=39f ps=0.56u w=0.3u l=0.13u
+X19 nand0 nand3 a_454_n122# VSS sg13_lv_nmos ad=0.102p pd=1.28u as=27f ps=0.48u w=0.3u l=0.13u
+X20 a_88_n122# R a_26_n122# VSS sg13_lv_nmos ad=57f pd=0.68u as=27f ps=0.48u w=0.3u l=0.13u
+X21 a_454_n122# nand1 VSS VSS sg13_lv_nmos ad=27f pd=0.48u as=0.102p ps=1.28u w=0.3u l=0.13u
+X22 a_846_n122# D a_766_n122# VSS sg13_lv_nmos ad=39f pd=0.56u as=40.5f ps=0.57u w=0.3u l=0.13u
+X23 nand3 nand2 VDD VDD sg13_lv_pmos ad=0.102p pd=1.28u as=57f ps=0.68u w=0.3u l=0.13u
+X24 nand5 nand2 VDD VDD sg13_lv_pmos ad=57f pd=0.68u as=0.102p ps=1.28u w=0.3u l=0.13u
+X25 a_1628_n122# R a_1550_n122# VSS sg13_lv_nmos ad=40.5f pd=0.57u as=39f ps=0.56u w=0.3u l=0.13u
+X26 nand1 nand0 VDD VDD sg13_lv_pmos ad=0.102p pd=1.28u as=57f ps=0.68u w=0.3u l=0.13u
+X27 VSS nand1 a_1958_n122# VSS sg13_lv_nmos ad=0.102p pd=1.28u as=27f ps=0.48u w=0.3u l=0.13u
+X28 nand2 nand1 VDD VDD sg13_lv_pmos ad=0.105p pd=1.3u as=57f ps=0.68u w=0.3u l=0.13u
+X29 a_1550_n122# nand2 VSS VSS sg13_lv_nmos ad=39f pd=0.56u as=0.102p ps=1.28u w=0.3u l=0.13u
+X30 VDD nand1 Q VDD sg13_lv_pmos ad=0.105p pd=1.3u as=57f ps=0.68u w=0.3u l=0.13u
+X31 Q nand5 VDD VDD sg13_lv_pmos ad=57f pd=0.68u as=0.102p ps=1.28u w=0.3u l=0.13u
