@@ -66,27 +66,28 @@ ngspice --version
 # head -10 "${SCRIPT_DIR}/magic/fdc_dense.spice"
 
 echo ""
-echo "=== Using precompiled SPICE netlist instead of Magic extraction ==="
+echo "=== Using precompiled SPICE netlist ==="
 
 # Ensure magic folder exists
 mkdir -p "${SCRIPT_DIR}/magic"
 
-# Path to your precompiled fdc_dense.spice file
-# (Place your precompiled file at: precompiled/fdc_dense.spice)
-PRECOMPILED_SPICE="${SCRIPT_DIR}/magic/fdc_dense.spice"
+# Expected location for the SPICE netlist (used by testbench)
+DEST_SPICE="${SCRIPT_DIR}/magic/fdc_dense.spice"
 
-if [ ! -f "${PRECOMPILED_SPICE}" ]; then
-    echo "ERROR: Precompiled SPICE netlist not found:"
-    echo "  ${PRECOMPILED_SPICE}"
-    echo "Please add it before running the testbench."
+# Check if the SPICE file already exists at the expected location
+if [ -f "${DEST_SPICE}" ]; then
+    echo "SPICE netlist already present at: ${DEST_SPICE}"
+    echo "Verifying file:"
+    ls -lh "${DEST_SPICE}"
+    echo ""
+    echo "First 10 lines:"
+    head -10 "${DEST_SPICE}"
+else
+    echo "ERROR: SPICE netlist not found at expected location:"
+    echo "  ${DEST_SPICE}"
+    echo "Please ensure fdc_dense.spice exists in the magic/ directory"
     exit 1
 fi
-
-# Copy the precompiled SPICE file into the magic output folder expected by the testbench
-cp "${PRECOMPILED_SPICE}" "${SCRIPT_DIR}/magic/fdc_dense.spice"
-
-echo "Copied precompiled SPICE to: ${SCRIPT_DIR}/magic/fdc_dense.spice"
-
 
 echo ""
 echo "=== Testing ngspice with a simple circuit ==="
