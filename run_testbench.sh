@@ -50,19 +50,43 @@ echo "=== Testing ngspice availability ==="
 which ngspice
 ngspice --version
 
-echo ""
-echo "=== Extracting SPICE netlist from Magic layout ==="
-cd "${SCRIPT_DIR}/magic"
-magic -noconsole -dnull -rcfile "${PDK_ROOT}/${PDK}/libs.tech/magic/${PDK}.magicrc" magic-extract.tcl
-cd "${SCRIPT_DIR}"
+# works for the si-time bouquet, but not for ihp pdk
+# echo ""
+# echo "=== Extracting SPICE netlist from Magic layout ==="
+# cd "${SCRIPT_DIR}/magic"
+# magic -noconsole -dnull -rcfile "${PDK_ROOT}/${PDK}/libs.tech/magic/${PDK}.magicrc" magic-extract.tcl
+# cd "${SCRIPT_DIR}"
+
+# echo ""
+# echo "=== Verifying extracted files ==="
+# ls -lh "${SCRIPT_DIR}/magic/fdc_dense.spice"
+
+# echo ""
+# echo "First 10 lines of fdc_dense.spice:"
+# head -10 "${SCRIPT_DIR}/magic/fdc_dense.spice"
 
 echo ""
-echo "=== Verifying extracted files ==="
-ls -lh "${SCRIPT_DIR}/magic/fdc_dense.spice"
+echo "=== Using precompiled SPICE netlist instead of Magic extraction ==="
 
-echo ""
-echo "First 10 lines of fdc_dense.spice:"
-head -10 "${SCRIPT_DIR}/magic/fdc_dense.spice"
+# Ensure magic folder exists
+mkdir -p "${SCRIPT_DIR}/magic"
+
+# Path to your precompiled fdc_dense.spice file
+# (Place your precompiled file at: precompiled/fdc_dense.spice)
+PRECOMPILED_SPICE="${SCRIPT_DIR}/precompiled/fdc_dense.spice"
+
+if [ ! -f "${PRECOMPILED_SPICE}" ]; then
+    echo "ERROR: Precompiled SPICE netlist not found:"
+    echo "  ${PRECOMPILED_SPICE}"
+    echo "Please add it before running the testbench."
+    exit 1
+fi
+
+# Copy the precompiled SPICE file into the magic output folder expected by the testbench
+cp "${PRECOMPILED_SPICE}" "${SCRIPT_DIR}/magic/fdc_dense.spice"
+
+echo "Copied precompiled SPICE to: ${SCRIPT_DIR}/magic/fdc_dense.spice"
+
 
 echo ""
 echo "=== Testing ngspice with a simple circuit ==="
