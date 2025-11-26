@@ -73,7 +73,7 @@ mkdir -p "${SCRIPT_DIR}/magic"
 
 # Path to your precompiled fdc_dense.spice file
 # (Place your precompiled file at: precompiled/fdc_dense.spice)
-PRECOMPILED_SPICE="${SCRIPT_DIR}/precompiled/fdc_dense.spice"
+PRECOMPILED_SPICE="${SCRIPT_DIR}/magic/fdc_dense.spice"
 
 if [ ! -f "${PRECOMPILED_SPICE}" ]; then
     echo "ERROR: Precompiled SPICE netlist not found:"
