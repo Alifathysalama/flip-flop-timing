@@ -109,7 +109,7 @@ echo ""
 echo "=== Running Testbench ==="
 cd "${SCRIPT_DIR}/testbench"
 sed -i "s|> /dev/null 2>&1||g" automated_testbench.py
-python automated_testbench.py --seed 42
+python3 automated_testbench.py --seed 42
 git checkout automated_testbench.py 2>/dev/null || true
 
 echo ""
