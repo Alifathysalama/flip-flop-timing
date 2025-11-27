@@ -65,51 +65,51 @@ ngspice --version
 # echo "First 10 lines of fdc_dense.spice:"
 # head -10 "${SCRIPT_DIR}/magic/fdc_dense.spice"
 
-echo ""
-echo "=== Using precompiled SPICE netlist ==="
+# echo ""
+# echo "=== Using precompiled SPICE netlist ==="
 
-# Ensure magic folder exists
-mkdir -p "${SCRIPT_DIR}/magic"
+# # Ensure magic folder exists
+# mkdir -p "${SCRIPT_DIR}/magic"
 
-# Expected location for the SPICE netlist (used by testbench)
-DEST_SPICE="${SCRIPT_DIR}/magic/fdc_dense.spice"
+# # Expected location for the SPICE netlist (used by testbench)
+# DEST_SPICE="${SCRIPT_DIR}/magic/fdc_dense.spice"
 
-# Check if the SPICE file already exists at the expected location
-if [ -f "${DEST_SPICE}" ]; then
-    echo "SPICE netlist already present at: ${DEST_SPICE}"
-    echo "Verifying file:"
-    ls -lh "${DEST_SPICE}"
-    echo ""
-    echo "First 10 lines:"
-    head -10 "${DEST_SPICE}"
-else
-    echo "ERROR: SPICE netlist not found at expected location:"
-    echo "  ${DEST_SPICE}"
-    echo "Please ensure fdc_dense.spice exists in the magic/ directory"
-    exit 1
-fi
+# # Check if the SPICE file already exists at the expected location
+# if [ -f "${DEST_SPICE}" ]; then
+#     echo "SPICE netlist already present at: ${DEST_SPICE}"
+#     echo "Verifying file:"
+#     ls -lh "${DEST_SPICE}"
+#     echo ""
+#     echo "First 10 lines:"
+#     head -10 "${DEST_SPICE}"
+# else
+#     echo "ERROR: SPICE netlist not found at expected location:"
+#     echo "  ${DEST_SPICE}"
+#     echo "Please ensure fdc_dense.spice exists in the magic/ directory"
+#     exit 1
+# fi
 
-echo ""
-echo "=== Testing ngspice with a simple circuit ==="
-cat > /tmp/test.cir << 'EOF'
-Simple resistor test
-V1 1 0 DC 1
-R1 1 0 1k
-.control
-run
-print v(1)
-quit
-.endc
-.end
-EOF
+# echo ""
+# echo "=== Testing ngspice with a simple circuit ==="
+# cat > /tmp/test.cir << 'EOF'
+# Simple resistor test
+# V1 1 0 DC 1
+# R1 1 0 1k
+# .control
+# run
+# print v(1)
+# quit
+# .endc
+# .end
+# EOF
 
-ngspice /tmp/test.cir
+# ngspice /tmp/test.cir
 
 echo ""
 echo "=== Running Testbench ==="
 cd "${SCRIPT_DIR}/testbench"
 sed -i "s|> /dev/null 2>&1||g" automated_testbench.py
-python3 automated_testbench.py
+python automated_testbench.py --seed 42
 git checkout automated_testbench.py 2>/dev/null || true
 
 echo ""

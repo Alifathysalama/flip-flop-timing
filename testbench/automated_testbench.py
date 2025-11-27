@@ -10,6 +10,7 @@ Key Differences from Author's Code:
 4. REGRESSION FRIENDLY: Returns exit codes for CI/CD integration
 5. DETAILED REPORTING: Shows what passed/failed and why
 6. REUSABLE: Class-based design for easy modification
+7. DETERMINISTIC: Uses random seed for reproducible results
 
 Expected Results:
 - Output Delay Fast: ~101ps (spec: 101ps) ✓
@@ -78,7 +79,7 @@ class TestResult:
 class FlipFlopAutomatedTestbench:
     """Fully automated self-checking testbench"""
     
-    def __init__(self, specs: TimingSpecs, save_plots: bool = True, verbose: bool = True):
+    def __init__(self, specs: TimingSpecs, save_plots: bool = True, verbose: bool = True, random_seed: int = 42):
         self.specs = specs
         self.save_plots = save_plots
         self.verbose = verbose
@@ -86,6 +87,9 @@ class FlipFlopAutomatedTestbench:
         self.vdd = specs.vdd_nominal
         self.clock_period = 1e-9
         self.temperature = 27
+        
+        # Set random seed for reproducibility
+        np.random.seed(random_seed)
         
         # Data storage
         self.data_cache = {}
@@ -379,6 +383,7 @@ quit
         # Generate plots
         if self.save_plots:
             self.plot_setup_cost(setups, setup_costs, optimal_setup)
+            self.plot_setup_waveforms(data_setup, setups)
         
         return setup_pass
     
@@ -499,6 +504,10 @@ quit
             message=f"Tolerance: ±{self.specs.hold_time_tolerance*1e12:.1f}ps"
         ))
         
+        # Generate plots
+        if self.save_plots:
+            self.plot_hold_waveforms(data_hold, holds)
+        
         return hold_pass
     
     # ==================== PLOTTING FUNCTIONS ====================
@@ -548,6 +557,105 @@ quit
         print("  ℹ Saved plot: setup_cost_plot.png")
         plt.close()
     
+    def plot_setup_waveforms(self, data_setup: List[Dict], setups: np.ndarray):
+        """Generate setup violation waveforms plot"""
+        data = data_setup
+        fig, axs = plt.subplots(3, 1, sharex=True, sharey=True, figsize=(10, 8))
+        
+        # Get first trace for clock signal
+        first_trace = list(data[0].values())[0]
+        axs[0].plot(first_trace['t']['C'] * 1e9, first_trace['x']['C'])
+        axs[0].set_ylabel('C', rotation=0)
+        axs[1].set_ylabel('D', rotation=0)
+        axs[2].set_ylabel('Q', rotation=0)
+        
+        # Plot D and Q for all setup times with color gradient
+        for n, d_dict in enumerate(data):
+            # Take one representative trace per setup time
+            d = list(d_dict.values())[0]
+            color = matplotlib.colormaps['viridis'](float(n / len(data)))
+            axs[1].plot(d['t']['D'] * 1e9, d['x']['D'], color=color, linewidth=0.5)
+            axs[2].plot(d['t']['Q'] * 1e9, d['x']['Q'], color=color, linewidth=0.5)
+        
+        for ax in axs:
+            ax.grid()
+            ax.set_yticks([0, 1.2], ['0 V', '1.2 V'])
+            ax.xaxis.set_major_locator(plticker.MultipleLocator(base=1))
+        
+        axs[-1].set_xlabel('Time (ns)')
+        plt.subplots_adjust(hspace=0)
+        plt.suptitle('Setup Time Sweep Simulation', y=0.95)
+        plt.savefig('setup_waveforms_plot.png', dpi=150, bbox_inches='tight')
+        print("  ℹ Saved plot: setup_waveforms_plot.png")
+        plt.close()
+    
+    def plot_hold_waveforms(self, data_hold: List[Dict], holds: np.ndarray):
+        """Generate hold violation waveforms plots (template 1 and template 2)"""
+        # Separate data by template
+        data_template1 = []
+        data_template2 = []
+        
+        for d_dict in data_hold:
+            # Separate traces by template number
+            traces_t1 = {k: v for k, v in d_dict.items() if v.get('template', 1) == 1}
+            traces_t2 = {k: v for k, v in d_dict.items() if v.get('template', 1) == 2}
+            if traces_t1:
+                data_template1.append(list(traces_t1.values())[0])
+            if traces_t2:
+                data_template2.append(list(traces_t2.values())[0])
+        
+        # Plot Template 1 (0->1 transition)
+        if data_template1:
+            data = data_template1
+            fig, axs = plt.subplots(3, 1, sharex=True, sharey=True, figsize=(10, 8))
+            axs[0].plot(data[0]['t']['C'] * 1e9, data[0]['x']['C'])
+            axs[0].set_ylabel('C', rotation=0)
+            axs[1].set_ylabel('D', rotation=0)
+            axs[2].set_ylabel('Q', rotation=0)
+            
+            for n, d in enumerate(data):
+                color = matplotlib.colormaps['viridis'](float(n / len(data)))
+                axs[1].plot(d['t']['D'] * 1e9, d['x']['D'], color=color, linewidth=0.5)
+                axs[2].plot(d['t']['Q'] * 1e9, d['x']['Q'], color=color, linewidth=0.5)
+            
+            for ax in axs:
+                ax.grid()
+                ax.set_yticks([0, 1.2], ['0 V', '1.2 V'])
+                ax.xaxis.set_major_locator(plticker.MultipleLocator(base=1))
+            
+            axs[-1].set_xlabel('Time (ns)')
+            plt.subplots_adjust(hspace=0)
+            plt.suptitle('Hold Time Violation Simulation (0→1 transition)', y=0.95)
+            plt.savefig('hold_waveforms_01_plot.png', dpi=150, bbox_inches='tight')
+            print("  ℹ Saved plot: hold_waveforms_01_plot.png")
+            plt.close()
+        
+        # Plot Template 2 (1->0 transition)
+        if data_template2:
+            data = data_template2
+            fig, axs = plt.subplots(3, 1, sharex=True, sharey=True, figsize=(10, 8))
+            axs[0].plot(data[0]['t']['C'] * 1e9, data[0]['x']['C'])
+            axs[0].set_ylabel('C', rotation=0)
+            axs[1].set_ylabel('D', rotation=0)
+            axs[2].set_ylabel('Q', rotation=0)
+            
+            for n, d in enumerate(data):
+                color = matplotlib.colormaps['viridis'](float(n / len(data)))
+                axs[1].plot(d['t']['D'] * 1e9, d['x']['D'], color=color, linewidth=0.5)
+                axs[2].plot(d['t']['Q'] * 1e9, d['x']['Q'], color=color, linewidth=0.5)
+            
+            for ax in axs:
+                ax.grid()
+                ax.set_yticks([0, 1.2], ['0 V', '1.2 V'])
+                ax.xaxis.set_major_locator(plticker.MultipleLocator(base=1))
+            
+            axs[-1].set_xlabel('Time (ns)')
+            plt.subplots_adjust(hspace=0)
+            plt.suptitle('Hold Time Violation Simulation (1→0 transition)', y=0.95)
+            plt.savefig('hold_waveforms_10_plot.png', dpi=150, bbox_inches='tight')
+            print("  ℹ Saved plot: hold_waveforms_10_plot.png")
+            plt.close()
+    
     # ==================== UTILITY FUNCTIONS ====================
     
     def load_data(self, filename: str) -> any:
@@ -585,16 +693,37 @@ quit
 
 def main():
     """Main test execution"""
+    import argparse
+    
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description='Automated Flip-Flop Timing Testbench')
+    parser.add_argument('--seed', type=int, default=42, 
+                       help='Random seed for reproducibility (default: 42)')
+    parser.add_argument('--no-plots', action='store_true',
+                       help='Disable plot generation')
+    parser.add_argument('--quiet', action='store_true',
+                       help='Reduce output verbosity')
+    args = parser.parse_args()
+    
+    # Set global random seed
+    np.random.seed(args.seed)
+    
     print("╔" + "="*68 + "╗")
     print("║" + " "*68 + "║")
     print("║" + " AUTOMATED SELF-CHECKING FLIP-FLOP TIMING TESTBENCH ".center(68) + "║")
     print("║" + " Based on daniestevez/flip-flop-timing ".center(68) + "║")
+    print("║" + f" Random Seed: {args.seed} ".center(68) + "║")
     print("║" + " "*68 + "║")
     print("╚" + "="*68 + "╝")
     
     # Initialize testbench with specifications
     specs = TimingSpecs()
-    tb = FlipFlopAutomatedTestbench(specs, save_plots=True, verbose=True)
+    tb = FlipFlopAutomatedTestbench(
+        specs, 
+        save_plots=not args.no_plots, 
+        verbose=not args.quiet,
+        random_seed=args.seed
+    )
     
     # Run complete test suite
     try:
